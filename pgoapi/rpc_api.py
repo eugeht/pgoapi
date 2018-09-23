@@ -53,10 +53,9 @@ from pogoprotos.networking.platform.requests.unknown_ptr8_request_pb2 import Unk
 
 class RpcApi:
 
-    RPC_ID = 0
     START_TIME = 0
 
-    def __init__(self, auth_provider, device_info):
+    def __init__(self, auth_provider, device_info, request_id):
 
         self.log = logging.getLogger(__name__)
 
@@ -65,6 +64,7 @@ class RpcApi:
         # mystical unknown6 - resolved by PokemonGoDev
         self._hash_engine = None
         self.request_proto = None
+        self.request_id = request_id
 
         if RpcApi.START_TIME == 0:
             RpcApi.START_TIME = get_time(ms=True)
@@ -78,23 +78,6 @@ class RpcApi:
 
     def activate_hash_server(self, auth_token):
         self._hash_engine = HashServer(auth_token)
-
-    def get_rpc_id(self):
-        if RpcApi.RPC_ID==0 :  #Startup
-            RpcApi.RPC_ID=1
-            if self.device_info is not None  and  \
-               self.device_info.get('device_brand','Apple')!='Apple':
-                rand=0x53B77E48
-            else:
-                rand=0x000041A7
-        else:
-            rand=random.randint(0,2**31)
-        RpcApi.RPC_ID += 1
-        cnt= RpcApi.RPC_ID
-        reqid= ((rand| ((cnt&0xFFFFFFFF)>>31))<<32)|cnt
-        self.log.debug("Incremented RPC Request ID: %s", reqid)
-
-        return reqid
 
     def decode_raw(self, raw):
         output = error = None
@@ -181,7 +164,7 @@ class RpcApi:
 
         request = RequestEnvelope()
         request.status_code = 2
-        request.request_id = self.get_rpc_id()
+        request.request_id = self.request_id
         request.accuracy = random.choice((5, 5, 5, 5, 10, 10, 10, 30, 30, 50, 65, random.uniform(66,80)))
 
         if player_position:
@@ -269,7 +252,7 @@ class RpcApi:
         sen.gravity_z = random.triangular(-1, .7, -0.8)
         sen.status = 3
 
-        sig.unknown25 = 0x4AE22D4661C83701
+        sig.unknown25 = -782790124105039914
 
         if self.device_info:
             for key in self.device_info:

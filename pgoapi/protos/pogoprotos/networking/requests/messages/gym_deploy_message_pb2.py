@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='pogoprotos/networking/requests/messages/gym_deploy_message.proto',
   package='pogoprotos.networking.requests.messages',
   syntax='proto3',
-  serialized_pb=_b('\n@pogoprotos/networking/requests/messages/gym_deploy_message.proto\x12\'pogoprotos.networking.requests.messages\"o\n\x10GymDeployMessage\x12\x0f\n\x07\x66ort_id\x18\x01 \x01(\t\x12\x12\n\npokemon_id\x18\x02 \x01(\x06\x12\x1a\n\x12player_lat_degrees\x18\x03 \x01(\x01\x12\x1a\n\x12player_lng_degrees\x18\x04 \x01(\x01\x62\x06proto3')
+  serialized_pb=_b('\n@pogoprotos/networking/requests/messages/gym_deploy_message.proto\x12\'pogoprotos.networking.requests.messages\"j\n\x10GymDeployMessage\x12\x0f\n\x07\x66ort_id\x18\x01 \x01(\t\x12\x12\n\npokemon_id\x18\x02 \x01(\x06\x12\x17\n\x0fplayer_latitude\x18\x03 \x01(\x01\x12\x18\n\x10player_longitude\x18\x04 \x01(\x01\x62\x06proto3')
 )
 
 
@@ -47,14 +47,14 @@ _GYMDEPLOYMESSAGE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='player_lat_degrees', full_name='pogoprotos.networking.requests.messages.GymDeployMessage.player_lat_degrees', index=2,
+      name='player_latitude', full_name='pogoprotos.networking.requests.messages.GymDeployMessage.player_latitude', index=2,
       number=3, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='player_lng_degrees', full_name='pogoprotos.networking.requests.messages.GymDeployMessage.player_lng_degrees', index=3,
+      name='player_longitude', full_name='pogoprotos.networking.requests.messages.GymDeployMessage.player_longitude', index=3,
       number=4, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
@@ -73,7 +73,7 @@ _GYMDEPLOYMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=109,
-  serialized_end=220,
+  serialized_end=215,
 )
 
 DESCRIPTOR.message_types_by_name['GymDeployMessage'] = _GYMDEPLOYMESSAGE

@@ -70,12 +70,16 @@ class PGoApi:
 
         self.device_info = device_info
 
+        # low and high 32 bits of request id
+        self.RPC_ID_LOW = 2
+        self.RPC_ID_HIGH = 1
+
     def set_logger(self, logger=None):
         self.log = logger or logging.getLogger(__name__)
 
     @staticmethod
     def get_api_version():
-        return 6900
+        return 9100
 
     def set_authentication(self, provider=None, oauth2_refresh_token=None, username=None, password=None, proxy_config=None, user_agent=None, timeout=None):
         if provider == 'ptc':
@@ -136,6 +140,13 @@ class PGoApi:
     def get_hash_server_token(self):
         return self._hash_server_token
 
+    def get_next_request_id(self):
+        self.RPC_ID_HIGH = ((7 ** 5) * self.RPC_ID_HIGH) % ((2 ** 31) - 1)
+        reqid = (self.RPC_ID_HIGH << 32) + self.RPC_ID_LOW
+        self.log.debug("New RPC Request ID: %s", reqid)
+        self.RPC_ID_LOW += 1
+        return reqid
+
     def __getattr__(self, func):
         def function(**kwargs):
             request = self.create_request()
@@ -147,7 +158,7 @@ class PGoApi:
         else:
             raise AttributeError
 
-    def app_simulation_login(self):
+    def app_simulation_login(self, country_code='US', timezone_str='America/Chicago'):
         self.log.info('Starting RPC login sequence (iOS app simulation)')
 
         # Send empty initial request
@@ -158,7 +169,7 @@ class PGoApi:
         
         # Send GET_PLAYER only
         request = self.create_request()
-        request.get_player(player_locale = {'country': 'US', 'language': 'en', 'timezone': 'America/Chicago'})
+        request.get_player(player_locale = {'country': country_code, 'language': 'en', 'timezone': timezone_str})
         response = request.call()
 
         if response.get('responses', {}).get('GET_PLAYER', {}).get('banned', False):
@@ -240,7 +251,7 @@ class PGoApiRequest:
             self.log.info('Not logged in')
             raise NotLoggedInException
 
-        request = RpcApi(self._auth_provider, self.device_info)
+        request = RpcApi(self._auth_provider, self.device_info, self.__parent__.get_next_request_id())
         request._session = self.__parent__._session
 
         hash_server_token = self.__parent__.get_hash_server_token()
